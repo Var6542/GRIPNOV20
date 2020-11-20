@@ -1,0 +1,18 @@
+setwd("~/Desktop")
+dataset=read.csv("Iris.csv")
+dataset=dataset[,-1]
+head(dataset)
+library(caTools)
+set.seed(123)
+split=sample.split(dataset$Species,SplitRatio = 0.75)
+training_set=subset(dataset,split==TRUE)
+test_set=subset(dataset,split==FALSE)
+training_set[-5]=scale(training_set[-5])
+test_set[-5]=scale(test_set[-5])
+library(rpart)
+classifier=rpart(Species~SepalLengthCm+SepalWidthCm+PetalLengthCm+PetalWidthCm, data=training_set)
+y_pred=predict(classifier,newdata=test_set[-5],type="class")
+cm=table(test_set[,5],y_pred)
+cm
+library(rpart.plot)
+rpart.plot(classifier,type=4,extra=101)
